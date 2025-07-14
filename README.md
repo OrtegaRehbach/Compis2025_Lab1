@@ -1,48 +1,63 @@
-# 🧪 Laboratorio 1: Introducción a ANTLR
+# Lab 1: Introducción a ANTLR – Construcción de Compiladores
 
-## 📋 Descripción General
+Este repositorio contiene el laboratorio 1 del curso “Construcción de Compiladores” en UVG. El objetivo es usar ANTLR para:
 
-En este laboratorio trabajarás con **ANTLR**, un generador de analizadores sintácticos. Hemos proporcionado un `Dockerfile` para ayudarte a configurar el entorno rápidamente. Utilizaremos Python para hacer pruebas, ya que es más sencillo que Java para pruebas pequeñas.
+* Definir una gramática simple (MiniLang)
+* Generar un parser y un lexer en Python
+* Validar sintácticamente un programa de ejemplo con un driver dentro de un contenedor Docker
 
-* **Modalidad: Individual**
+## Contenido
 
-## 🧰 Instrucciones de Configuración
+* `MiniLang.g4`: Gramática ANTLR para MiniLang.
+* `Driver.py`: Script Python que carga un archivo de programa, ejecuta el lexer y el parser.
+* `program_test.txt`: Programa de prueba para validar la gramática.
+* `python-venv.sh`: Script opcional para crear un entorno virtual.
+* `requirements.txt`: Dependencias Python (`antlr4-python3-runtime`, etc.).
+* `commands/antlr` y `commands/grun`: Wrappers para invocar ANTLR y GRUN.
+* `Dockerfile`: Imagen con Java, Python y ANTLR preinstalados.
 
-1. **Construir y Ejecutar el Contenedor Docker**Desde el directorio raíz de este laboratorio, ejecuta el siguiente comando para construir la imagen y lanzar un contenedor interactivo:
+## Requisitos Previos
 
-   ```bash
-   docker build --rm . -t lab1-image && docker run --rm -ti -v "$(pwd)/program":/program lab1-image
-   ```
-2. **Entender el Entorno**
+* Docker (Windows, macOS o Linux).
+* Conexión a internet para descargar imágenes y paquetes.
 
-   - El directorio `program` se monta dentro del contenedor.
-   - Este contiene la **gramática de ANTLR**, un archivo `Driver.py` (punto de entrada principal) y un archivo `program_test.txt` (entrada de prueba).
-3. **Generar Archivos de Lexer y Parser**Dentro del contenedor, compila la gramática ANTLR a Python con:
+## Construcción de la Imagen Docker
 
-   ```bash
-   antlr -Dlanguage=Python3 MiniLang.g4
-   ```
-4. **Ejecutar el Analizador**
-   Usa el driver para analizar el archivo de prueba:
+Desde la raíz de este repositorio:
 
-   ```bash
-   python3 Driver.py program_test.txt
-   ```
+```bash
+docker build --rm -t lab1-image .
+```
 
-   - ✅ Si el archivo es sintácticamente correcto, **no se mostrará ningún resultado**.
-   - ❌ Si existen errores, ANTLR los mostrará en la consola.
-   - **Next Step:** Jueguen editando el archivo y vean los cambios en los resultados de compilación.
+## Ejecución del Contenedor
 
-## 📋 Entregables
+Para montar la carpeta `program` y abrir un shell interactivo:
 
-- Realice un análisis sobre la gramática de ANTLR y el archivo de Driver y comente acerca del funcionamiento de estos, es decir, explique sus partes lo más brevemente posible e indique cómo funcionan los distintos elementos de la gramática escrita en ANTLR, e.g. "Utilizar # en ANTLR sirve para...", "Un archivo .g4 tiene las siguientes secciones...", etc.
-- **Video de YouTube no listado** (pero público) con sus pruebas, donde compila bien y donde no compila bien y con sus comentarios al punto anterior.
-- Repo de Github con todo su código.
+```bash
+docker run --rm -it -v "${PWD}/program:/program" lab1-image bash
+```
 
-## 🚀 ¿Qué Sigue?
+> En PowerShell se utiliza `${PWD}`; en CMD se puede usar `%cd%`.
 
-- Esta configuración es un **entorno básico** para experimentar con ANTLR.
-- A medida que avances en el curso:
-  - Implementarás **Visitors** o **Listeners**
-  - Realizarás **análisis semántico**
-- Para tus proyectos, se recomienda **extender este entorno** para soportar una arquitectura más robusta y modular.
+## Generación del Parser
+
+Dentro del contenedor, en `/program`:
+
+```bash
+antlr -Dlanguage=Python3 MiniLang.g4
+```
+
+## Ejecución del Driver
+
+```bash
+python3 Driver.py program_test.txt
+```
+
+* **Sin errores**: la sintaxis del programa es válida.
+* **Con errores**: ANTLR mostrará mensajes que describen el error junto con su ubicación.
+
+## Video de Demostración
+
+Video con la explicación:
+
+[https://youtu.be/tM59sn8oHd8](https://youtu.be/tM59sn8oHd8)
